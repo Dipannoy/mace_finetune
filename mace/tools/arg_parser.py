@@ -84,6 +84,38 @@ def build_default_arg_parser() -> argparse.ArgumentParser:
             "EnergyDipolesMACE",
         ],
     )
+
+    parser.add_argument(
+        "--embedding_flag",
+        help="Embedding Flag",
+        default=0,
+        type=int,
+
+    )
+
+    parser.add_argument(
+        "--interaction_flag",
+        help="Interaction Flag",
+        default=0,
+        type=int,
+
+    )
+
+    parser.add_argument(
+        "--products_flag",
+        help="Products Flag",
+        default=0,
+        type=int,
+
+    )
+    parser.add_argument(
+        "--readout_flag",
+        help="Readout Flag",
+        default=0,
+        type=int,
+
+    )
+    
     parser.add_argument(
         "--r_max", help="distance cutoff (in Ang)", type=float, default=5.0
     )

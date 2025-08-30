@@ -20,6 +20,8 @@ import mace
 from mace import data, modules, tools
 from mace.calculators import mace_mp
 from mace.tools import torch_geometric, load_foundations
+# from mace.tools.utils import load_foundations
+
 from mace.tools.scripts_utils import (
     LRScheduler,
     create_error_table,
@@ -376,11 +378,17 @@ def main() -> None:
         logging.info(
             f"Using foundation model {args.foundation_model} as initial checkpoint."
         )
+        logging.info(model)
+
         model_foundation = calc.models[0]
         model = load_foundations(
             model,
             model_foundation,
             z_table,
+            embedding=args.embedding_flag,
+            interaction=args.interaction_flag,
+            products=args.products_flag,
+            readout=args.readout_flag,
             load_readout=True,
             max_L=args.max_L,
         )
@@ -518,6 +526,14 @@ def main() -> None:
         ema = ExponentialMovingAverage(model.parameters(), decay=args.ema_decay)
 
     logging.info(model)
+    # for name, param in model.named_parameters():
+    #     if param.requires_grad:
+    #         print(name, param.data)
+    for name, param in model.named_parameters():
+        if 'readouts' in name:
+            param.requires_grad = True
+        else:
+            param.requires_grad = False
     logging.info(f"Number of parameters: {tools.count_parameters(model)}")
     logging.info(f"Optimizer: {optimizer}")
 

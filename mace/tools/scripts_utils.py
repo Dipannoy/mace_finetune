@@ -198,6 +198,11 @@ def create_error_table(
             "RMSE MU / mDebye / atom",
             "rel MU RMSE %",
         ]
+    total_E = 0
+    total_F = 0
+    test_count = 0
+    total_stress = 0
+    rmse_virials = 0
     for name, subset in all_collections:
         data_loader = torch_geometric.dataloader.DataLoader(
             dataset=[
@@ -208,6 +213,7 @@ def create_error_table(
             shuffle=False,
             drop_last=False,
         )
+        
 
         logging.info(f"Evaluating {name} ...")
         _, metrics = evaluate(
@@ -244,6 +250,13 @@ def create_error_table(
                     f"{metrics['rel_rmse_f']:.2f}",
                 ]
             )
+            if name != 'train' and name != 'valid':
+                print(name)
+                total_E = total_E + metrics['rmse_e_per_atom'] * 1000
+                total_F = total_F + metrics['rmse_f'] * 1000
+                test_count = test_count+1
+
+
         elif (
             table_type == "PerAtomRMSEstressvirials"
             and metrics["rmse_stress"] is not None
@@ -257,6 +270,13 @@ def create_error_table(
                     f"{metrics['rmse_stress'] * 1000:.1f}",
                 ]
             )
+           if name != 'train' and name != 'valid':
+                print(name)
+                total_E = total_E + metrics['rmse_e_per_atom'] * 1000
+                total_F = total_F + metrics['rmse_f'] * 1000
+                total_stress = total_stress + metrics['rmse_stress'] * 1000
+                test_count = test_count+1
+                rmse_virials = total_stress/test_count
         elif (
             table_type == "PerAtomRMSEstressvirials"
             and metrics["rmse_virials"] is not None
@@ -270,6 +290,13 @@ def create_error_table(
                     f"{metrics['rmse_virials'] * 1000:.1f}",
                 ]
             )
+           if name != 'train' and name != 'valid':
+                print(name)
+                total_E = total_E + metrics['rmse_e_per_atom'] * 1000
+                total_F = total_F + metrics['rmse_f'] * 1000
+                total_stress = total_stress + metrics['rmse_virials'] * 1000
+                test_count = test_count+1
+                rmse_virials = total_stress/test_count
         elif table_type == "TotalMAE":
             table.add_row(
                 [
@@ -288,6 +315,8 @@ def create_error_table(
                     f"{metrics['rel_mae_f']:.2f}",
                 ]
             )
+ 
+
         elif table_type == "DipoleRMSE":
             table.add_row(
                 [
@@ -315,4 +344,7 @@ def create_error_table(
                     f"{metrics['rel_rmse_mu']:.1f}",
                 ]
             )
+    print('Mean RMSE E ', total_E/test_count)
+    print('Mean RMSE F ', total_F/test_count)
+    print('Mean RMSE Virials ', rmse_virials)
     return table
