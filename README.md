@@ -1,3 +1,11 @@
+# MACE fine-tuning study: full vs. partial (frozen-layer) fine-tuning
+
+> **This repository is a copy of [ACEsuit/mace](https://github.com/ACEsuit/mace) (MIT License) with my additions on top.** All credit for MACE itself goes to its authors; the original README follows below.
+
+**My contribution (Dipannoy Das Gupta):** support for **partial fine-tuning** of MACE foundation models by freezing selected layers, and a comparison of full fine-tuning against partial fine-tuning (frozen layers) on downstream materials data, to see how much of the pretrained model needs to be retrained.
+
+---
+
 # <span style="font-size:larger;">MACE</span>
 
 [![GitHub release](https://img.shields.io/github/release/ACEsuit/mace.svg)](https://GitHub.com/ACEsuit/mace/releases/)
